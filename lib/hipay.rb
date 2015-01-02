@@ -5,8 +5,8 @@ module Hipay
 
   TEST_PLATFORM = "test-"
 
-  def self.call_api(ressource, operation, plateform, message = nil)
-    test_url = (plateform ? TEST_PLATFORM : "")
+  def self.call_api(ressource, operation, test, message = nil)
+    test_url = (test ? TEST_PLATFORM : "")
     client = Savon.client(wsdl: "https://#{test_url}ws.hipay.com/soap/#{ressource}?wsdl", ssl_version: :TLSv1)
     response = client.call(operation, message: message)
     return response.body
@@ -14,19 +14,19 @@ module Hipay
 
   class Payment
 
-    def initialize(wsLogin, wsPassword, websiteId, categoryId, platform = false, wsSubAccountLogin = nil)
+    def initialize(wsLogin, wsPassword, websiteId, categoryId,  wsSubAccountLogin: nil, test: false)
       @wsLogin = wsLogin
       @wsPassword = wsPassword
       @websiteId = websiteId
       @categoryId = categoryId
       @wsSubAccountLogin = wsSubAccountLogin
-      @plateform = platform
+      @test = test
     end
 
-    def generate(amount, customerIpAddress,  urlCallback, currency = "EUR", rating = "ALL", locale = "en_GB",
-                 manualCapture = 0, executionDate = '', description = 'payment', customerEmail = nil,
-                 urlAccept = nil, urlDecline = nil, urlCancel = nil, urlLogo = nil,
-                 merchantReference = nil, merchantComment = nil, emailCallback = nil, freedata = nil)
+    def generate(amount, customerIpAddress,  urlCallback, currency: "EUR", rating: "ALL", locale: "en_GB",
+                 manualCapture: 0, executionDate: '', description: 'payment', customerEmail: nil,
+                 urlAccept: nil, urlDecline: nil, urlCancel: nil, urlLogo: nil,
+                 merchantReference: nil, merchantComment: nil, emailCallback: nil, freedata: nil)
 
       operation = :generate
       parameters = build_basic_request
@@ -68,7 +68,7 @@ module Hipay
       parameters[:freedata] = freedata
       end
 
-      response = Hipay::call_api("payment-v2", operation, @plateform, {parameters: parameters})
+      Hipay::call_api("payment-v2", operation, @test, {parameters: parameters})[:generate_response][:generate_result]
     end
 
     def build_basic_request()
@@ -77,15 +77,57 @@ module Hipay
 
   end
 
+  class Refund
+
+    def initialize(wsLogin, wsPassword, websiteId, , test: false)
+      @wsLogin = wsLogin
+      @wsPassword = wsPassword
+      @websiteId = websiteId
+      @test = test
+    end
+
+    def card(transactionPublicId, currency, amount)
+      @transactionPublicId = transactionPublicId
+      operation = :card
+      parameters = build_basic_request
+
+      if !amount.nil?
+          parameters[:amount] = amount
+      end
+      if !currency
+        parameters[:currency] = currency
+      end
+      Hipay::call_api("refund-v2", operation, @test, {parameters: parameters})[:generate_response][:generate_result]
+    end
+
+    def account(transactionPublicId, currency, amount)
+      @transactionPublicId = transactionPublicId
+      operation = :account
+      parameters = build_basic_request
+
+      if !amount.nil?
+        parameters[:amount] = amount
+      end
+      if !currency
+        parameters[:currency] = currency
+      end
+      Hipay::call_api("refund-v2", operation, @test, {parameters: parameters})[:generate_response][:generate_result]
+    end
+  end
+
+    def build_basic_request()
+      { wsLogin: @wsLogin, wsPassword: @wsPassword, websiteId: @websiteId, transactionPublicId: @transactionPublicId }
+    end
+
+  end
+
   class Transaction
 
   end
 
-  class Refund
 
-  end
 
-  class BussinessLines
+  class BusinessLines
 
   end
 
@@ -95,6 +137,5 @@ module Hipay
 
 end
 
-
 #payment = Hipay::Payment.new("XXXXXXXXX", "XXXXXXXXXXXX", "XXXX", "XXX", true)
-#gepayment.generate(10, "192.168.1.1", "http://www.site.fr/callback.php"
+#payment.generate(10, "192.168.1.1", "http://www.site.fr/callback.php"
