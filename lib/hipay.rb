@@ -1,4 +1,4 @@
-#require "hipay/version"
+require "hipay/version"
 require 'savon'
 
 module Hipay
