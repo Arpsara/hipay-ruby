@@ -1,4 +1,4 @@
-require "hipay/version"
+#require "hipay/version"
 require 'savon'
 
 module Hipay
@@ -22,8 +22,8 @@ module Hipay
       @test = test
     end
 
-    def generate(amount, customerIpAddress,  urlCallback, currency: "EUR", rating: "ALL", locale: "en_GB",
-                 manualCapture: 0, executionDate: '', description: 'payment', customerEmail: nil,
+    def generate(amount, customerIpAddress,  urlCallback, executionDate, description, currency: "EUR",
+                 rating: "ALL", locale: "en_GB", manualCapture: 0, customerEmail: nil,
                  urlAccept: nil, urlDecline: nil, urlCancel: nil, urlLogo: nil,
                  merchantReference: nil, merchantComment: nil, emailCallback: nil, freedata: nil)
 
@@ -98,7 +98,7 @@ module Hipay
       end
       Hipay::call_api("refund-v2", operation, @test, {parameters: parameters})[:card_response][:card_result]
     end
-R
+
     def account(transactionPublicId, currency, amount)
       @transactionPublicId = transactionPublicId
       operation = :account

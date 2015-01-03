@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Hipay::VERSION
   spec.authors       = ["UgoMare"]
   spec.email         = ["ugo.mare.epitech@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Hipay gem for hipay webservice}
+  spec.description   = %q{This gem works with an Hipay webservice account https://www.hipaywallet.com}
   spec.homepage      = ""
   spec.license       = "MIT"
 
