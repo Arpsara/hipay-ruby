@@ -93,12 +93,12 @@ module Hipay
       if !amount.nil?
           parameters[:amount] = amount
       end
-      if !currency
+      if !currency.nil?
         parameters[:currency] = currency
       end
       Hipay::call_api("refund-v2", operation, @test, {parameters: parameters})[:card_response][:card_result]
     end
-
+R
     def account(transactionPublicId, currency, amount)
       @transactionPublicId = transactionPublicId
       operation = :account
@@ -107,7 +107,7 @@ module Hipay
       if !amount.nil?
         parameters[:amount] = amount
       end
-      if !currency
+      if !currency.nil?
         parameters[:currency] = currency
       end
       Hipay::call_api("refund-v2", operation, @test, { parameters: parameters })[:account_response][:account_result]
