@@ -14,12 +14,11 @@ module Hipay
 
   class Payment
 
-    def initialize(wsLogin, wsPassword, websiteId, categoryId,  wsSubAccountLogin: nil, test: false)
+    def initialize(wsLogin, wsPassword, websiteId, categoryId, test: false)
       @wsLogin = wsLogin
       @wsPassword = wsPassword
       @websiteId = websiteId
       @categoryId = categoryId
-      @wsSubAccountLogin = wsSubAccountLogin
       @test = test
     end
 
@@ -79,7 +78,7 @@ module Hipay
 
   class Refund
 
-    def initialize(wsLogin, wsPassword, websiteId, , test: false)
+    def initialize(wsLogin, wsPassword, websiteId, test: false)
       @wsLogin = wsLogin
       @wsPassword = wsPassword
       @websiteId = websiteId
@@ -97,7 +96,7 @@ module Hipay
       if !currency
         parameters[:currency] = currency
       end
-      Hipay::call_api("refund-v2", operation, @test, {parameters: parameters})[:generate_response][:generate_result]
+      Hipay::call_api("refund-v2", operation, @test, {parameters: parameters})[:card_response][:card_result]
     end
 
     def account(transactionPublicId, currency, amount)
@@ -111,9 +110,8 @@ module Hipay
       if !currency
         parameters[:currency] = currency
       end
-      Hipay::call_api("refund-v2", operation, @test, {parameters: parameters})[:generate_response][:generate_result]
+      Hipay::call_api("refund-v2", operation, @test, { parameters: parameters })[:account_response][:account_result]
     end
-  end
 
     def build_basic_request()
       { wsLogin: @wsLogin, wsPassword: @wsPassword, websiteId: @websiteId, transactionPublicId: @transactionPublicId }
@@ -123,16 +121,71 @@ module Hipay
 
   class Transaction
 
+    def initialize(wsLogin, wsPassword, test: false)
+      @wsLogin = wsLogin
+      @wsPassword = wsPassword
+      @test = test
+    end
+
+    def confirm(transactionPublicId)
+      @transactionPublicId = transactionPublicId
+      operation = :confirm
+      parameters = build_basic_request
+      Hipay::call_api("transaction-v2", operation, @test, { parameters: parameters })[:confirm_response][:confirm_result]
+    end
+
+    def cancel(transactionPublicId)
+      @transactionPublicId = transactionPublicId
+      operation = :cancel
+      parameters = build_basic_request
+      Hipay::call_api("transaction-v2", operation, @test, { parameters: parameters })[:cancel_response][:cancel_result]
+    end
+
+    def build_basic_request
+      { wsLogin: @wsLogin, wsPassword: @wsPassword, transactionPublicId: @transactionPublicId }
+    end
+
   end
-
-
 
   class BusinessLines
 
+    def initialize(wsLogin, wsPassword, test: false)
+      @wsLogin = wsLogin
+      @wsPassword = wsPassword
+      @test = test
+    end
+
+    def get(locale)
+      @locale = locale
+      operation = :get
+      parameters = build_basic_request
+      Hipay::call_api("business-lines-v2", operation, @test, { parameters: parameters })[:get_response][:get_result]
+    end
+
+    def build_basic_request
+      { wsLogin: @wsLogin, wsPassword: @wsPassword, locale: @locale }
+    end
   end
 
   class WebsiteTopics
 
+    def initialize(wsLogin, wsPassword, test: false)
+      @wsLogin = wsLogin
+      @wsPassword = wsPassword
+      @test = test
+    end
+
+    def get(locale, businessLineId)
+      @locale = locale
+      @businessLineId = businessLineId
+      operation = :get
+      parameters = build_basic_request
+      Hipay::call_api("website-topics-v2", operation, @test, { parameters: parameters })[:get_response][:get_result]
+    end
+
+    def build_basic_request
+      { wsLogin: @wsLogin, wsPassword: @wsPassword, locale: @locale, businessLineId: @businessLineId }
+    end
   end
 
 end
