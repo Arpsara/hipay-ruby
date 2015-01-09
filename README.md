@@ -81,17 +81,8 @@ urlLogo: string - (optional) This URL of your logo for the payment page (HTTPS)
 merchantReference: string - (optional) Merchants’ order reference
 merchantComment: string - (optional) Merchants’ comment concerning the order
 emailCallback: string - (optional) Email used by HiPay Wallet to post operation notifications
-freedata: string - (optional) Custom data
-<freeData>
-<item>
- <key>keyOne</key>
- <value>ValueOne</value>
-</item>
-<item>
- <key>keyTwo</key>
- <value>ValueTwo</value>
-</item>
-</freeData>
+freeData: array - (optional) Custom data {item: [{:key => "keyOne", :value => "valueOne"}, {:key => "keyTwo", :value => "valueTwo"}]}
+
 ```
 
 Usage:

@@ -25,7 +25,7 @@ module Hipay
     def generate(amount, customerIpAddress,  urlCallback, executionDate, description, currency: "EUR",
                  rating: "ALL", locale: "en_GB", manualCapture: 0, customerEmail: nil,
                  urlAccept: nil, urlDecline: nil, urlCancel: nil, urlLogo: nil,
-                 merchantReference: nil, merchantComment: nil, emailCallback: nil, freedata: nil)
+                 merchantReference: nil, merchantComment: nil, emailCallback: nil, freeData: nil)
 
       operation = :generate
       parameters = build_basic_request
@@ -63,8 +63,8 @@ module Hipay
       if !emailCallback.nil?
       parameters[:emailCallback] = emailCallback
       end
-      if !freedata.nil?
-      parameters[:freedata] = freedata
+      if !freeData.nil?
+      parameters[:freeData] = freeData
       end
 
       Hipay::call_api("payment-v2", operation, @test, {parameters: parameters})[:generate_response][:generate_result]
